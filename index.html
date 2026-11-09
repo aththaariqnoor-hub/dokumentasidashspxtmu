@@ -1,0 +1,1774 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dokumentasi — SPX Logistics Dashboard</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    :root {
+      /* Warna khas Kiro */
+      --kiro-dark: #0d0f1a;
+      --kiro-deeper: #12151f;
+      --kiro-navy: #1a1d2e;
+      --kiro-purple: #5c6bc0;
+      --kiro-violet: #7c4dff;
+      --kiro-indigo: #3d5afe;
+      --kiro-accent: #82b1ff;
+      --kiro-glow: rgba(92, 107, 192, .25);
+
+      --green: #4caf50;
+      --yellow: #ffc107;
+      --orange: #ff9800;
+      --red: #f44336;
+      --teal: #00bcd4;
+      --pink: #e91e63;
+
+      --text-primary: #e8eaf6;
+      --text-secondary: #9fa8da;
+      --text-muted: #5c6680;
+      --border: rgba(92, 107, 192, .2);
+      --card-bg: #1a1d2e;
+      --card-hover: #1e2235;
+      --bg: #0f1117;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
+      line-height: 1.7;
+    }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--kiro-dark)
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--kiro-purple);
+      border-radius: 3px
+    }
+
+    /* ── TOPNAV ── */
+    .topnav {
+      position: sticky;
+      top: 0;
+      z-index: 999;
+      background: rgba(13, 15, 26, .95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 32px;
+    }
+
+    .topnav .brand {
+      font-weight: 800;
+      font-size: 1.05em;
+      background: linear-gradient(90deg, #82b1ff, #7c4dff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .topnav .brand span {
+      -webkit-text-fill-color: initial
+    }
+
+    .topnav nav {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap
+    }
+
+    .topnav nav a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      padding: 5px 13px;
+      border-radius: 20px;
+      font-size: .82em;
+      border: 1px solid transparent;
+      transition: all .2s;
+    }
+
+    .topnav nav a:hover {
+      background: var(--kiro-glow);
+      border-color: var(--kiro-purple);
+      color: var(--kiro-accent);
+    }
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(135deg, #0d0f1a 0%, #1a1d2e 40%, #12152b 70%, #0d1030 100%);
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+      padding: 90px 32px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(92, 107, 192, .18), transparent);
+      pointer-events: none;
+    }
+
+    .hero-icon {
+      font-size: 4rem;
+      margin-bottom: 16px;
+      display: block;
+      filter: drop-shadow(0 0 24px rgba(92, 107, 192, .6));
+    }
+
+    .hero h1 {
+      font-size: 2.8em;
+      font-weight: 900;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, #e8eaf6 30%, #82b1ff 70%, #7c4dff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.2;
+    }
+
+    .hero p {
+      font-size: 1.1em;
+      color: var(--text-secondary);
+      max-width: 680px;
+      margin: 0 auto 32px;
+    }
+
+    .badge-row {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap
+    }
+
+    .hbadge {
+      background: rgba(92, 107, 192, .15);
+      border: 1px solid rgba(92, 107, 192, .4);
+      color: var(--kiro-accent);
+      padding: 6px 18px;
+      border-radius: 20px;
+      font-size: .85em;
+      font-weight: 600;
+    }
+
+    .hbadge-special {
+      background: linear-gradient(90deg, rgba(124, 77, 255, .3), rgba(61, 90, 254, .3));
+      border: 1px solid rgba(124, 77, 255, .5);
+      color: #b39ddb;
+      padding: 6px 18px;
+      border-radius: 20px;
+      font-size: .85em;
+      font-weight: 700;
+    }
+
+    /* ── WRAP ── */
+    .wrap {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 48px 24px
+    }
+
+    /* ── SECTION HEADER ── */
+    .sec-header {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      background: linear-gradient(135deg, var(--kiro-navy), #1e2140);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--kiro-purple);
+      border-radius: 14px;
+      padding: 20px 28px;
+      margin: 60px 0 28px;
+    }
+
+    .sec-icon {
+      font-size: 2em;
+      filter: drop-shadow(0 0 8px rgba(92, 107, 192, .5))
+    }
+
+    .sec-header h2 {
+      font-size: 1.4em;
+      font-weight: 800;
+      color: var(--text-primary);
+      margin-bottom: 3px
+    }
+
+    .sec-header p {
+      font-size: .9em;
+      color: var(--text-secondary)
+    }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px 28px;
+      margin-bottom: 16px;
+      transition: border-color .2s;
+    }
+
+    .card:hover {
+      border-color: rgba(92, 107, 192, .4)
+    }
+
+    /* ── FEATURE CARD ── */
+    .fcard {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 16px;
+      transition: all .2s;
+    }
+
+    .fcard:hover {
+      border-color: rgba(92, 107, 192, .5);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(92, 107, 192, .1)
+    }
+
+    .fcard-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 22px;
+      background: rgba(92, 107, 192, .08);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .fcard-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5em;
+      flex-shrink: 0;
+    }
+
+    .fcard-title {
+      font-weight: 700;
+      font-size: 1.05em;
+      color: var(--text-primary);
+      margin-bottom: 2px
+    }
+
+    .fcard-sub {
+      font-size: .82em;
+      color: var(--text-secondary)
+    }
+
+    .fcard-body {
+      padding: 18px 22px
+    }
+
+    /* ── GRID ── */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+      margin: 16px 0
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 14px;
+      margin: 16px 0
+    }
+
+    .grid-stat {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+      gap: 12px;
+      margin: 16px 0
+    }
+
+    /* ── STAT BOX ── */
+    .sbox {
+      border-radius: 12px;
+      padding: 18px;
+      text-align: center;
+      border: 1px solid;
+    }
+
+    .sbox-val {
+      font-size: 2em;
+      font-weight: 900;
+      margin-bottom: 4px
+    }
+
+    .sbox-label {
+      font-size: .85em;
+      font-weight: 600
+    }
+
+    .sbox-desc {
+      font-size: .78em;
+      margin-top: 4px;
+      opacity: .75
+    }
+
+    .sbox-purple {
+      background: rgba(92, 107, 192, .1);
+      border-color: rgba(92, 107, 192, .4);
+      color: #9fa8da
+    }
+
+    .sbox-green {
+      background: rgba(76, 175, 80, .08);
+      border-color: rgba(76, 175, 80, .35);
+      color: #81c784
+    }
+
+    .sbox-yellow {
+      background: rgba(255, 193, 7, .08);
+      border-color: rgba(255, 193, 7, .35);
+      color: #ffd54f
+    }
+
+    .sbox-red {
+      background: rgba(244, 67, 54, .08);
+      border-color: rgba(244, 67, 54, .35);
+      color: #e57373
+    }
+
+    .sbox-teal {
+      background: rgba(0, 188, 212, .08);
+      border-color: rgba(0, 188, 212, .35);
+      color: #4dd0e1
+    }
+
+    .sbox-orange {
+      background: rgba(255, 152, 0, .08);
+      border-color: rgba(255, 152, 0, .35);
+      color: #ffb74d
+    }
+
+    /* ── INFO CARD ── */
+    .icard {
+      border-radius: 10px;
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+      background: rgba(26, 29, 46, .8);
+    }
+
+    .icard .ititle {
+      font-weight: 700;
+      margin-bottom: 6px;
+      font-size: .95em
+    }
+
+    .icard .ibody {
+      font-size: .85em;
+      color: var(--text-secondary);
+      line-height: 1.5
+    }
+
+    /* ── FLOW ── */
+    .flow {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+      margin: 14px 0
+    }
+
+    .flow-step {
+      background: rgba(26, 29, 46, .9);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: .85em;
+      text-align: center;
+      min-width: 110px;
+      flex: 1;
+      transition: border-color .2s;
+    }
+
+    .flow-step:hover {
+      border-color: var(--kiro-purple)
+    }
+
+    .flow-step .snum {
+      display: block;
+      width: 22px;
+      height: 22px;
+      background: linear-gradient(135deg, var(--kiro-purple), var(--kiro-violet));
+      color: #fff;
+      border-radius: 50%;
+      font-size: .7em;
+      font-weight: 700;
+      line-height: 22px;
+      margin: 0 auto 6px;
+    }
+
+    .flow-step .slabel {
+      font-weight: 600;
+      color: var(--text-primary);
+      font-size: .88em
+    }
+
+    .flow-step .ssub {
+      font-size: .76em;
+      color: var(--text-secondary);
+      margin-top: 2px
+    }
+
+    .farrow {
+      color: var(--kiro-purple);
+      font-size: 1.4em;
+      font-weight: 700
+    }
+
+    /* ── CALLOUT ── */
+    .callout {
+      border-left: 4px solid;
+      padding: 12px 18px;
+      border-radius: 0 10px 10px 0;
+      margin: 14px 0;
+      font-size: .9em;
+    }
+
+    .c-purple {
+      border-color: var(--kiro-purple);
+      background: rgba(92, 107, 192, .1)
+    }
+
+    .c-green {
+      border-color: var(--green);
+      background: rgba(76, 175, 80, .08)
+    }
+
+    .c-yellow {
+      border-color: var(--yellow);
+      background: rgba(255, 193, 7, .08)
+    }
+
+    .c-red {
+      border-color: var(--red);
+      background: rgba(244, 67, 54, .08)
+    }
+
+    .c-teal {
+      border-color: var(--teal);
+      background: rgba(0, 188, 212, .08)
+    }
+
+    .callout b {
+      display: block;
+      margin-bottom: 4px
+    }
+
+    /* ── PILL / TAG ── */
+    .pill {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: .79em;
+      font-weight: 600;
+    }
+
+    .p-purple {
+      background: rgba(92, 107, 192, .2);
+      color: #9fa8da;
+      border: 1px solid rgba(92, 107, 192, .4)
+    }
+
+    .p-green {
+      background: rgba(76, 175, 80, .15);
+      color: #81c784;
+      border: 1px solid rgba(76, 175, 80, .35)
+    }
+
+    .p-yellow {
+      background: rgba(255, 193, 7, .15);
+      color: #ffd54f;
+      border: 1px solid rgba(255, 193, 7, .35)
+    }
+
+    .p-red {
+      background: rgba(244, 67, 54, .15);
+      color: #e57373;
+      border: 1px solid rgba(244, 67, 54, .35)
+    }
+
+    .p-teal {
+      background: rgba(0, 188, 212, .15);
+      color: #4dd0e1;
+      border: 1px solid rgba(0, 188, 212, .35)
+    }
+
+    .p-orange {
+      background: rgba(255, 152, 0, .15);
+      color: #ffb74d;
+      border: 1px solid rgba(255, 152, 0, .35)
+    }
+
+    /* ── TABLE ── */
+    .rt {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .88em;
+      margin: 12px 0
+    }
+
+    .rt th {
+      background: rgba(92, 107, 192, .2);
+      color: var(--kiro-accent);
+      padding: 10px 14px;
+      text-align: left;
+      font-weight: 700
+    }
+
+    .rt td {
+      padding: 9px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-secondary)
+    }
+
+    .rt tr:last-child td {
+      border-bottom: none
+    }
+
+    .rt tr:hover td {
+      background: rgba(92, 107, 192, .05)
+    }
+
+    /* ── KIRO BADGE ── */
+    .kiro-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, rgba(124, 77, 255, .2), rgba(61, 90, 254, .2));
+      border: 1px solid rgba(124, 77, 255, .4);
+      color: #b39ddb;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: .82em;
+      font-weight: 700;
+    }
+
+    /* ── CODE ── */
+    code {
+      background: rgba(92, 107, 192, .15);
+      color: var(--kiro-accent);
+      padding: 2px 7px;
+      border-radius: 5px;
+      font-family: 'Consolas', monospace;
+      font-size: .88em;
+    }
+
+    pre {
+      background: rgba(13, 15, 26, .8);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 20px;
+      font-family: 'Consolas', monospace;
+      font-size: .85em;
+      color: #c5cae9;
+      overflow-x: auto;
+      margin: 12px 0;
+      line-height: 1.6;
+    }
+
+    /* ── ACCORDION ── */
+    .acc {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 12px
+    }
+
+    .acc-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 22px;
+      cursor: pointer;
+      background: rgba(26, 29, 46, .8);
+      transition: background .2s;
+      user-select: none;
+    }
+
+    .acc-header:hover {
+      background: rgba(92, 107, 192, .1)
+    }
+
+    .acc-header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px
+    }
+
+    .acc-arrow {
+      color: var(--text-secondary);
+      transition: transform .3s;
+      font-size: 1.1em
+    }
+
+    .acc-arrow.open {
+      transform: rotate(90deg)
+    }
+
+    .acc-body {
+      display: none;
+      padding: 20px 22px;
+      border-top: 1px solid var(--border)
+    }
+
+    .acc-body.open {
+      display: block
+    }
+
+    /* ── DIVIDER ── */
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--kiro-purple), transparent);
+      margin: 40px 0;
+      opacity: .4;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--kiro-dark);
+      border-top: 1px solid var(--border);
+      text-align: center;
+      padding: 40px;
+      color: var(--text-muted);
+      margin-top: 80px;
+    }
+
+    footer .footer-logo {
+      font-size: 1.5em;
+      font-weight: 900;
+      margin-bottom: 8px;
+      background: linear-gradient(90deg, #82b1ff, #7c4dff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    footer p {
+      font-size: .85em;
+      margin-top: 4px
+    }
+
+    /* ── TIMELINE ── */
+    .timeline {
+      position: relative;
+      padding-left: 28px
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 8px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(180deg, var(--kiro-purple), transparent);
+    }
+
+    .tl-item {
+      position: relative;
+      margin-bottom: 24px
+    }
+
+    .tl-dot {
+      position: absolute;
+      left: -24px;
+      top: 4px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--kiro-purple), var(--kiro-violet));
+      border: 2px solid var(--bg);
+      box-shadow: 0 0 8px rgba(92, 107, 192, .5);
+    }
+
+    .tl-title {
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 4px
+    }
+
+    .tl-body {
+      font-size: .9em;
+      color: var(--text-secondary)
+    }
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:700px) {
+      .topnav {
+        flex-direction: column;
+        gap: 10px;
+        padding: 12px 16px
+      }
+
+      .hero h1 {
+        font-size: 1.8em
+      }
+
+      .flow {
+        flex-direction: column
+      }
+
+      .farrow {
+        transform: rotate(90deg)
+      }
+
+      .sec-header {
+        flex-direction: column;
+        text-align: center
+      }
+
+      .wrap {
+        padding: 32px 16px
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ══ TOPNAV ══ -->
+  <div class="topnav">
+    <div class="brand">
+      <span>📦</span> SPX Logistics Dashboard
+    </div>
+    <nav>
+      <a href="#tentang">🏠 Tentang</a>
+      <a href="#fitur">⚡ Fitur</a>
+      <a href="#cara-pakai">📖 Cara Pakai</a>
+      <a href="#aturan">📐 Aturan Bisnis</a>
+      <a href="#instalasi">🛠️ Instalasi</a>
+      <a href="#pembuatan">🤖 Proses Pembuatan</a>
+    </nav>
+  </div>
+
+  <!-- ══ HERO ══ -->
+  <div class="hero">
+    <span class="hero-icon">📦</span>
+    <h1>SPX Logistics Dashboard</h1>
+    <p>Sistem monitoring logistik & performa kurir untuk SPX Tambang Ulang Hub — dibuat khusus untuk memudahkan
+      pengelolaan data pengiriman harian</p>
+    <div class="badge-row">
+      <span class="hbadge">📦 SPX Tambang Ulang Hub</span>
+      <span class="hbadge">🚀 Versi 3.4</span>
+      <span class="hbadge">🖥️ Berbasis Web</span>
+      <span class="hbadge">5 Menu Utama</span>
+      <span class="hbadge-special">🤖 Dibuat bersama Kiro AI</span>
+    </div>
+  </div>
+
+  <div class="wrap">
+
+    <!-- ══════════════════════════════════════════════
+     SECTION: TENTANG APLIKASI
+══════════════════════════════════════════════ -->
+    <div id="tentang" class="sec-header">
+      <div class="sec-icon">🏠</div>
+      <div>
+        <h2>Tentang Aplikasi</h2>
+        <p>Apa itu SPX Logistics Dashboard dan untuk apa digunakan</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap">
+        <div style="flex:1;min-width:260px">
+          <h3 style="font-size:1.2em;font-weight:800;color:var(--kiro-accent);margin-bottom:12px">
+            📦 SPX Logistics Dashboard
+          </h3>
+          <p style="color:var(--text-secondary);margin-bottom:14px">
+            Sebuah <strong style="color:var(--text-primary)">aplikasi web</strong> yang dirancang khusus untuk
+            membantu tim operasional <strong style="color:var(--text-primary)">SPX Tambang Ulang Hub</strong>
+            dalam memantau dan mengelola data pengiriman paket setiap hari.
+          </p>
+          <p style="color:var(--text-secondary);margin-bottom:14px">
+            Sebelum ada aplikasi ini, data pengiriman dikelola secara manual menggunakan
+            <strong style="color:var(--text-primary)">Google Apps Script</strong> yang terbatas.
+            Sekarang semua informasi bisa dilihat dalam satu tampilan yang rapi, cepat, dan mudah dipahami.
+          </p>
+          <div class="callout c-purple">
+            <b>🎯 Tujuan utama aplikasi ini:</b>
+            Memudahkan operator & fcaility lead dalam memantau performa kurir, melacak paket bermasalah (onhold,
+            damage),
+            dan membuat keputusan operasional berdasarkan data yang akurat.
+          </div>
+        </div>
+        <div style="flex:0 0 280px">
+          <div class="grid-stat">
+            <div class="sbox sbox-purple">
+              <div class="sbox-val">5</div>
+              <div class="sbox-label">Menu Utama</div>
+              <div class="sbox-desc">Fitur lengkap dalam satu aplikasi</div>
+            </div>
+            <div class="sbox sbox-green">
+              <div class="sbox-val">52</div>
+              <div class="sbox-label">Kolom Data CSV</div>
+              <div class="sbox-desc">Semua kolom dari SPX terbaca otomatis</div>
+            </div>
+            <div class="sbox sbox-teal">
+              <div class="sbox-val">3</div>
+              <div class="sbox-label">Tipe Upload</div>
+              <div class="sbox-desc">Forward Order, Onhold, Onhold Update</div>
+            </div>
+            <div class="sbox sbox-yellow">
+              <div class="sbox-val">v3.4</div>
+              <div class="sbox-label">Versi Aktif</div>
+              <div class="sbox-desc">Diperbarui Nov 2026</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="icard">
+        <div class="ititle">👥 Siapa yang menggunakan?</div>
+        <div class="ibody">
+          Operator & Facility Lead SPX Tambang Ulang Hub yang bertugas memantau data pengiriman harian,
+          performa kurir, dan menangani paket bermasalah.
+        </div>
+      </div>
+      <div class="icard">
+        <div class="ititle">🖥️ Cara akses?</div>
+        <div class="ibody">
+          Cukup buka browser (Chrome/Edge/Firefox) dan masuk ke alamat aplikasi.
+          Tidak perlu install apapun. Bisa diakses dari komputer atau HP.
+        </div>
+      </div>
+      <div class="icard">
+        <div class="ititle">📊 Data dari mana?</div>
+        <div class="ibody">
+          Data diupload dari file CSV yang diunduh dari sistem SPX. Upload dilakukan
+          oleh operator setiap hari atau saat dibutuhkan.
+        </div>
+      </div>
+      <div class="icard">
+        <div class="ititle">🔐 Keamanan?</div>
+        <div class="ibody">
+          Setiap aksi yang mengubah data (upload, hapus, edit catatan) dilindungi
+          dengan password khusus yang hanya diketahui operator.
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ══════════════════════════════════════════════
+     SECTION: FITUR-FITUR
+══════════════════════════════════════════════ -->
+    <div id="fitur" class="sec-header">
+      <div class="sec-icon">⚡</div>
+      <div>
+        <h2>Fitur-Fitur Aplikasi</h2>
+        <p>Penjelasan lengkap setiap menu dan fungsinya</p>
+      </div>
+    </div>
+
+    <!-- FITUR 1: DASHBOARD -->
+    <div class="fcard">
+      <div class="fcard-header">
+        <div class="fcard-icon" style="background:rgba(92,107,192,.2)">📊</div>
+        <div>
+          <div class="fcard-title">Dashboard — Rekapan Performa Harian</div>
+          <div class="fcard-sub">Halaman utama yang tampil pertama kali saat membuka aplikasi</div>
+        </div>
+      </div>
+      <div class="fcard-body">
+        <p style="color:var(--text-secondary);margin-bottom:16px">
+          Dashboard adalah pusat informasi utama. Di sini operator bisa melihat <strong
+            style="color:var(--text-primary)">
+            ringkasan semua paket</strong> dalam satu tanggal atau rentang waktu tertentu — berapa yang terkirim,
+          berapa yang bermasalah, dan bagaimana performa tiap kurir.
+        </p>
+
+        <div class="grid-3">
+          <div class="icard" style="border-color:rgba(76,175,80,.3)">
+            <div class="ititle" style="color:#81c784">✅ Delivered</div>
+            <div class="ibody">Paket yang berhasil diantarkan ke penerima. Status: <code>Delivered</code> atau
+              <code>Selesai</code>
+            </div>
+          </div>
+          <div class="icard" style="border-color:rgba(255,193,7,.3)">
+            <div class="ititle" style="color:#ffd54f">🔁 Reschedule</div>
+            <div class="ibody">Paket kembali ke hub, akan diantarkan ulang. Status: <code>lmhub_received</code></div>
+          </div>
+          <div class="icard" style="border-color:rgba(255,152,0,.3)">
+            <div class="ititle" style="color:#ffb74d">↩️ Return</div>
+            <div class="ibody">Paket dikembalikan ke pengirim. Status mengandung kata <code>return</code></div>
+          </div>
+          <div class="icard" style="border-color:rgba(244,67,54,.3)">
+            <div class="ititle" style="color:#e57373">🔀 Misroute</div>
+            <div class="ibody">Paket salah jalur atau status tidak dikenali (catch-all)</div>
+          </div>
+          <div class="icard" style="border-color:rgba(206,147,216,.3)">
+            <div class="ititle" style="color:#ce93d8">⚠️ Damage</div>
+            <div class="ibody">Paket rusak, masih di station</div>
+          </div>
+          <div class="icard" style="border-color:rgba(156,39,176,.3)">
+            <div class="ititle" style="color:#ba68c8">🔴 Damage Return</div>
+            <div class="ibody">Paket rusak, sudah keluar station</div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <h4 style="color:var(--kiro-accent);margin-bottom:12px;font-size:.95em">📅 Mode Filter Tanggal</h4>
+        <div class="flow">
+          <div class="flow-step">
+            <span class="snum">H</span>
+            <div class="slabel">Harian</div>
+            <div class="ssub">Pilih satu tanggal</div>
+          </div>
+          <div class="farrow">→</div>
+          <div class="flow-step">
+            <span class="snum">7</span>
+            <div class="slabel">7 Hari</div>
+            <div class="ssub">Otomatis 7 hari terakhir</div>
+          </div>
+          <div class="farrow">→</div>
+          <div class="flow-step">
+            <span class="snum">B</span>
+            <div class="slabel">Bulanan</div>
+            <div class="ssub">Pilih bulan & tahun</div>
+          </div>
+          <div class="farrow">→</div>
+          <div class="flow-step">
+            <span class="snum">R</span>
+            <div class="slabel">Rentang</div>
+            <div class="ssub">Tentukan tgl awal & akhir</div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <h4 style="color:var(--kiro-accent);margin-bottom:12px;font-size:.95em">🚴 Tabel Performa Kurir</h4>
+        <p style="color:var(--text-secondary);font-size:.9em;margin-bottom:10px">
+          Menampilkan rekap per kurir: jumlah delivered, reschedule, return, misroute, damage, dan nilai CR%.
+          <strong style="color:var(--text-primary)">Header kolom bisa diklik</strong> untuk mengurutkan dari terbesar
+          ke terkecil (atau sebaliknya) — berguna untuk cepat melihat siapa kurir terbaik atau yang perlu perhatian.
+        </p>
+        <div class="callout c-green">
+          <b>💡 Cara baca CR% (Completion Rate):</b>
+          CR% = (Delivered + Return + Misroute) / Total × 100<br>
+          <span class="pill p-green">≥ 95%</span> Excellent &nbsp;
+          <span class="pill p-yellow">90–94%</span> Warning &nbsp;
+          <span class="pill p-red">&lt; 90%</span> Critical
+        </div>
+
+        <div class="divider"></div>
+
+        <h4 style="color:var(--kiro-accent);margin-bottom:12px;font-size:.95em">🔄 Rekapan Onhold Update <span
+            class="pill p-teal" style="font-size:.75em">Hanya mode Harian</span></h4>
+        <p style="color:var(--text-secondary);font-size:.9em;margin-bottom:10px">
+          Bagian khusus di bawah dashboard yang membandingkan paket onhold pada tanggal terpilih
+          dengan data update terbaru yang diupload via <strong style="color:var(--text-primary)">CSV Onhold
+            Update</strong>.
+        </p>
+        <div class="grid-3">
+          <div class="icard" style="border-color:rgba(0,188,212,.3)">
+            <div class="ititle" style="color:#4dd0e1">📦 Total Onhold</div>
+            <div class="ibody">Berapa paket yang onhold di tanggal itu</div>
+          </div>
+          <div class="icard" style="border-color:rgba(92,107,192,.3)">
+            <div class="ititle" style="color:#9fa8da">✅ Sudah Update</div>
+            <div class="ibody">Yang sudah ada data terbarunya</div>
+          </div>
+          <div class="icard" style="border-color:rgba(255,193,7,.3)">
+            <div class="ititle" style="color:#ffd54f">⏳ Belum Update</div>
+            <div class="ibody">Yang belum ada kabarnya, perlu upload</div>
+          </div>
+          <div class="icard" style="border-color:rgba(76,175,80,.3)">
+            <div class="ititle" style="color:#81c784">✅ Delivered</div>
+            <div class="ibody">Sudah berhasil diantarkan</div>
+          </div>
+          <div class="icard" style="border-color:rgba(255,152,0,.3)">
+            <div class="ititle" style="color:#ffb74d">🔄 Perlu Follow-Up</div>
+            <div class="ibody">Masih <code>lmhub_received</code> atau <code>return</code> — perlu dicek lagi</div>
+          </div>
+          <div class="icard" style="border-color:rgba(150,150,150,.3)">
+            <div class="ititle" style="color:#9e9e9e">📋 Lainnya</div>
+            <div class="ibody">Status lain yang dianggap sudah selesai</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FITUR 2: MONITORING ONHOLD -->
+    <div class="fcard">
+      <div class="fcard-header">
+        <div class="fcard-icon" style="background:rgba(255,193,7,.15)">⏸️</div>
+        <div>
+          <div class="fcard-title">Monitoring Onhold — Lacak Paket Tertahan</div>
+          <div class="fcard-sub">Daftar paket onhold lengkap dengan validasi otomatis</div>
+        </div>
+      </div>
+      <div class="fcard-body">
+        <p style="color:var(--text-secondary);margin-bottom:16px">
+          Menampilkan semua paket yang berstatus onhold beserta informasi lengkapnya: siapa kurirnya,
+          apa alasannya, sudah berapa kali onhold, dan apakah statusnya <strong
+            style="color:var(--text-primary)">VALID</strong>
+          atau <strong style="color:var(--text-primary)">TIDAK VALID</strong> berdasarkan aturan bisnis SPX.
+        </p>
+
+        <h4 style="color:var(--kiro-accent);margin-bottom:10px;font-size:.9em">📋 Aturan Validasi Onhold</h4>
+        <div class="grid-2">
+          <div class="icard" style="border-color:rgba(76,175,80,.3)">
+            <div class="ititle" style="color:#81c784">✅ Akun STD / Standard</div>
+            <div class="ibody">
+              <strong>VALID</strong> jika alasan onhold adalah:<br>
+              • <code>recipient_reject</code><br>
+              • <code>recipient_reschedule</code><br>
+              (berapa pun jumlah onhold)<br><br>
+              <strong>TIDAK VALID</strong> jika alasan lain.
+            </div>
+          </div>
+          <div class="icard" style="border-color:rgba(92,107,192,.3)">
+            <div class="ititle" style="color:#9fa8da">ℹ️ Akun Non-STD</div>
+            <div class="ibody">
+              <code>recipient_reject</code> + total ≥ 3 → ✅ Valid<br>
+              <code>recipient_reject</code> + total &lt; 3 → ❌ Tidak Valid<br>
+              Bukan reject + total &lt; 3 → ✅ Valid<br>
+              Bukan reject + total ≥ 3 → ❌ Tidak Valid
+            </div>
+          </div>
+        </div>
+
+        <div class="callout c-teal" style="margin-top:12px">
+          <b>🔗 Tombol Bukti Onhold:</b>
+          Setiap baris punya tombol yang langsung membuka halaman bukti onhold di sistem SPX — memudahkan verifikasi.
+        </div>
+      </div>
+    </div>
+
+    <!-- FITUR 3: MONITORING DAMAGE -->
+    <div class="fcard">
+      <div class="fcard-header">
+        <div class="fcard-icon" style="background:rgba(206,147,216,.15)">⚠️</div>
+        <div>
+          <div class="fcard-title">Monitoring Damage — Kelola Paket Rusak</div>
+          <div class="fcard-sub">Pantau paket damage dan proses pengembaliannya</div>
+        </div>
+      </div>
+      <div class="fcard-body">
+        <p style="color:var(--text-secondary);margin-bottom:16px">
+          Menampilkan semua paket berstatus <code>damage</code> (masih di station) dan
+          <code>damage_return</code> (sudah keluar station). Operator bisa mencatat status
+          tindak lanjut setiap paket.
+        </p>
+
+        <div class="callout c-red" style="margin-bottom:18px">
+          <b>⚠️ Penting — Syarat Paket Muncul di Menu Ini:</b>
+          Paket hanya akan muncul di Monitoring Damage jika kolom <strong>Status</strong> di file CSV
+          sudah diubah menjadi <code>damage</code> sebelum diupload.<br><br>
+          Paket dengan status <code>lmhub_received</code>, <code>lmhub_packed</code>, <code>return</code>,
+          atau status lainnya <strong>tidak akan muncul</strong> di menu ini, meskipun paket tersebut
+          secara fisik rusak.<br><br>
+          📋 <strong>Cara yang benar:</strong> Saat download CSV dari SPX, cari paket yang rusak,
+          ganti nilai kolom <em>Status</em>-nya menjadi <code>damage</code> secara manual di Excel/spreadsheet,
+          lalu baru upload file CSV tersebut ke aplikasi.
+        </div>
+
+        <h4 style="color:var(--kiro-accent);margin-bottom:10px;font-size:.9em">📝 Status Manual Paket Damage</h4>
+        <table class="rt">
+          <thead>
+            <tr>
+              <th>Status Manual</th>
+              <th>Artinya</th>
+              <th>Efek ke Data</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="pill p-yellow">📋 Belum Dilaporkan</span></td>
+              <td>Paket damage, belum ada laporan</td>
+              <td>Status paket tetap <code>damage</code></td>
+            </tr>
+            <tr>
+              <td><span class="pill p-purple">⏳ Menunggu Konfirmasi</span></td>
+              <td>Sudah dilaporkan, menunggu keputusan</td>
+              <td>Status paket tetap <code>damage</code></td>
+            </tr>
+            <tr>
+              <td><span class="pill p-green">✅ Selesai Dikembalikan</span></td>
+              <td>Proses selesai, paket sudah keluar</td>
+              <td>Status otomatis berubah ke <code>damage_return</code> ⚡</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout c-purple">
+          <b>⚡ Otomatis!</b>
+          Saat operator memilih <strong>"Selesai Dikembalikan"</strong>, sistem secara otomatis
+          mengubah status paket di database menjadi <code>damage_return</code> — tidak perlu upload ulang CSV.
+        </div>
+      </div>
+    </div>
+
+    <!-- FITUR 4: MONITORING NS -->
+    <div class="fcard">
+      <div class="fcard-header">
+        <div class="fcard-icon" style="background:rgba(0,188,212,.15)">🏷️</div>
+        <div>
+          <div class="fcard-title">Monitoring NS — Paket Akun NS</div>
+          <div class="fcard-sub">Filter khusus untuk akun yang mengandung kata "NS"</div>
+        </div>
+      </div>
+      <div class="fcard-body">
+        <p style="color:var(--text-secondary)">
+          Menampilkan paket dari akun order yang mengandung kata <strong style="color:var(--text-primary)">"NS"</strong>
+          pada nama akunnya. Fitur dan tampilan serupa dengan Monitoring Damage — bisa dicatat, difilter,
+          dan ditelusuri per kurir atau tanggal.
+        </p>
+      </div>
+    </div>
+
+    <!-- FITUR 5: CATATAN HARIAN -->
+    <div class="fcard">
+      <div class="fcard-header">
+        <div class="fcard-icon" style="background:rgba(124,77,255,.15)">📓</div>
+        <div>
+          <div class="fcard-title">Catatan Harian — Jurnal Operasional</div>
+          <div class="fcard-sub">Catat kejadian, kendala, atau pencapaian setiap hari</div>
+        </div>
+      </div>
+      <div class="fcard-body">
+        <p style="color:var(--text-secondary);margin-bottom:16px">
+          Menu untuk membuat catatan operasional harian dengan format teks kaya (bisa tebal, miring, daftar,
+          tabel, dll). Berguna untuk mendokumentasikan kejadian penting, kendala lapangan, atau pencapaian tim.
+        </p>
+
+        <div class="grid-2">
+          <div class="icard" style="border-color:rgba(92,107,192,.3)">
+            <div class="ititle" style="color:#9fa8da">📝 Umum</div>
+            <div class="ibody">Catatan umum operasional sehari-hari</div>
+          </div>
+          <div class="icard" style="border-color:rgba(244,67,54,.3)">
+            <div class="ititle" style="color:#e57373">⚠️ Kendala</div>
+            <div class="ibody">Masalah atau hambatan yang terjadi</div>
+          </div>
+          <div class="icard" style="border-color:rgba(76,175,80,.3)">
+            <div class="ititle" style="color:#81c784">🏆 Achievement</div>
+            <div class="ibody">Pencapaian atau prestasi tim</div>
+          </div>
+          <div class="icard" style="border-color:rgba(0,188,212,.3)">
+            <div class="ititle" style="color:#4dd0e1">ℹ️ Info</div>
+            <div class="ibody">Informasi penting yang perlu dicatat</div>
+          </div>
+        </div>
+
+        <div class="callout c-yellow" style="margin-top:12px">
+          <b>🔐 Keamanan Catatan Harian:</b>
+          Menu ini dilindungi password yang hanya perlu dimasukkan <strong>sekali saat pertama membuka menu</strong>.
+          Selanjutnya bisa tambah, edit, dan hapus catatan tanpa perlu input password lagi selama sesi browser aktif.
+        </div>
+      </div>
+    </div>
+
+    <!-- FITUR 6: KELOLA DATA -->
+    <div class="fcard">
+      <div class="fcard-header">
+        <div class="fcard-icon" style="background:rgba(255,152,0,.15)">📂</div>
+        <div>
+          <div class="fcard-title">Kelola Data — Upload & Riwayat Batch</div>
+          <div class="fcard-sub">Unggah data CSV dari SPX dan kelola riwayat upload</div>
+        </div>
+      </div>
+      <div class="fcard-body">
+        <p style="color:var(--text-secondary);margin-bottom:16px">
+          Semua data di aplikasi ini berasal dari file CSV yang diunduh dari sistem SPX.
+          Menu Kelola Data adalah tempat untuk mengunggah file tersebut dan mengelola riwayatnya.
+        </p>
+
+        <h4 style="color:var(--kiro-accent);margin-bottom:10px;font-size:.9em">📤 Tipe Upload CSV</h4>
+        <table class="rt">
+          <thead>
+            <tr>
+              <th>Tipe</th>
+              <th>Isi File</th>
+              <th>Kapan Diupload</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="pill p-purple">📦 Forward Order</span></td>
+              <td>Data pengiriman harian seluruh paket</td>
+              <td>Setiap hari setelah data tersedia</td>
+            </tr>
+            <tr>
+              <td><span class="pill p-yellow">⏸️ Onhold</span></td>
+              <td>Data khusus paket yang statusnya onhold</td>
+              <td>Setiap hari untuk update data onhold</td>
+            </tr>
+            <tr>
+              <td><span class="pill p-teal">🔄 Onhold Update</span></td>
+              <td>Data terbaru untuk paket yang pernah onhold</td>
+              <td>Saat ada update status paket onhold sebelumnya</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout c-green" style="margin-top:12px">
+          <b>♻️ Rollback / Batalkan Upload:</b>
+          Setiap upload tercatat sebagai "Batch" dengan ID unik. Jika ada upload yang salah,
+          bisa dihapus dari tab <strong>Riwayat Batch</strong> — semua data dari batch tersebut
+          akan dihapus dari database.
+        </div>
+
+        <div class="callout c-purple" style="margin-top:8px">
+          <b>🔄 Header CSV Otomatis:</b>
+          Tidak perlu khawatir urutan kolom CSV — sistem membaca header secara otomatis dan
+          mencocokkan ke kolom yang tepat di database, termasuk menangani typo umum di CSV SPX.
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ══════════════════════════════════════════════
+     SECTION: CARA PAKAI
+══════════════════════════════════════════════ -->
+    <div id="cara-pakai" class="sec-header">
+      <div class="sec-icon">📖</div>
+      <div>
+        <h2>Cara Menggunakan Aplikasi</h2>
+        <p>Panduan langkah demi langkah untuk operator</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="color:var(--kiro-accent);margin-bottom:16px">📅 Alur Kerja Harian Operator</h3>
+      <div class="flow">
+        <div class="flow-step">
+          <span class="snum">1</span>
+          <div class="slabel">Download CSV</div>
+          <div class="ssub">Unduh dari sistem SPX</div>
+        </div>
+        <div class="farrow">→</div>
+        <div class="flow-step">
+          <span class="snum">2</span>
+          <div class="slabel">Upload Forward Order</div>
+          <div class="ssub">Kelola Data → Upload</div>
+        </div>
+        <div class="farrow">→</div>
+        <div class="flow-step">
+          <span class="snum">3</span>
+          <div class="slabel">Upload Onhold</div>
+          <div class="ssub">Jika ada paket onhold</div>
+        </div>
+        <div class="farrow">→</div>
+        <div class="flow-step">
+          <span class="snum">4</span>
+          <div class="slabel">Cek Dashboard</div>
+          <div class="ssub">Lihat rekapan hari ini</div>
+        </div>
+        <div class="farrow">→</div>
+        <div class="flow-step">
+          <span class="snum">5</span>
+          <div class="slabel">Tindak Lanjut</div>
+          <div class="ssub">Catat damage, NS, dsb</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panduan Upload -->
+    <div class="acc">
+      <div class="acc-header" onclick="toggleAcc(this)">
+        <div class="acc-header-left">
+          <span style="font-size:1.3em">📤</span>
+          <div>
+            <div style="font-weight:700">Cara Upload CSV</div>
+            <div style="font-size:.83em;color:var(--text-secondary)">Langkah upload data baru</div>
+          </div>
+        </div>
+        <span class="acc-arrow">▶</span>
+      </div>
+      <div class="acc-body">
+        <ol style="padding-left:18px;color:var(--text-secondary);font-size:.9em;line-height:2">
+          <li>Klik tombol <strong style="color:var(--text-primary)">📂 Kelola Data</strong> di pojok kanan atas</li>
+          <li>Pilih <strong style="color:var(--text-primary)">Target Tabel</strong> yang sesuai (Forward Order / Onhold
+            / Onhold Update)</li>
+          <li>Klik area upload atau <strong style="color:var(--text-primary)">seret file CSV</strong> ke dalam kotak
+          </li>
+          <li>Masukkan <strong style="color:var(--text-primary)">password</strong></li>
+          <li>Klik <strong style="color:var(--text-primary)">⬆️ Upload & Proses</strong></li>
+          <li>Tunggu hingga muncul notifikasi sukses dengan jumlah baris yang diproses</li>
+        </ol>
+        <div class="callout c-yellow" style="margin-top:12px">
+          <b>⚠️ Catatan Onhold Update:</b>
+          File CSV Onhold Update hanya menyimpan data untuk order_id yang sebelumnya
+          pernah masuk tabel Onhold. Order lain otomatis diabaikan.
+        </div>
+      </div>
+    </div>
+
+    <!-- Panduan Catatan Damage -->
+    <div class="acc">
+      <div class="acc-header" onclick="toggleAcc(this)">
+        <div class="acc-header-left">
+          <span style="font-size:1.3em">⚠️</span>
+          <div>
+            <div style="font-weight:700">Cara Mencatat Tindak Lanjut Damage</div>
+            <div style="font-size:.83em;color:var(--text-secondary)">Update status paket rusak</div>
+          </div>
+        </div>
+        <span class="acc-arrow">▶</span>
+      </div>
+      <div class="acc-body">
+        <div class="callout c-red" style="margin-bottom:14px">
+          <b>⚠️ Sebelum mulai — pastikan status di CSV sudah benar:</b>
+          Paket hanya muncul di menu ini jika kolom <strong>Status</strong> di file CSV
+          sudah diubah menjadi <code>damage</code> sebelum diupload. Jika statusnya masih
+          <code>lmhub_received</code>, <code>lmhub_packed</code>, <code>return</code>, atau lainnya,
+          paket tidak akan terlihat di sini.<br><br>
+          Ubah nilai kolom <em>Status</em> di Excel/spreadsheet menjadi <code>damage</code> terlebih dahulu,
+          lalu baru upload CSV ke aplikasi.
+        </div>
+        <ol style="padding-left:18px;color:var(--text-secondary);font-size:.9em;line-height:2">
+          <li>Buka menu <strong style="color:var(--text-primary)">⚠️ Monitoring Damage</strong></li>
+          <li>Cari paket yang ingin dicatat (bisa gunakan kolom pencarian)</li>
+          <li>Klik tombol <strong style="color:var(--text-primary)">📝 Catat</strong> di baris paket tersebut</li>
+          <li>Pilih <strong style="color:var(--text-primary)">Status Manual</strong> yang sesuai</li>
+          <li>Isi Tindakan yang Diambil dan Catatan (opsional)</li>
+          <li>Masukkan password → klik <strong style="color:var(--text-primary)">💾 Simpan</strong></li>
+        </ol>
+        <div class="callout c-green" style="margin-top:12px">
+          <b>⚡ Otomatis:</b> Jika memilih "Selesai Dikembalikan", status paket di database
+          langsung berubah ke <code>damage_return</code> tanpa perlu upload ulang CSV.
+        </div>
+      </div>
+    </div>
+
+    <!-- Panduan Catatan Harian -->
+    <div class="acc">
+      <div class="acc-header" onclick="toggleAcc(this)">
+        <div class="acc-header-left">
+          <span style="font-size:1.3em">📓</span>
+          <div>
+            <div style="font-weight:700">Cara Membuat Catatan Harian</div>
+            <div style="font-size:.83em;color:var(--text-secondary)">Jurnal operasional harian</div>
+          </div>
+        </div>
+        <span class="acc-arrow">▶</span>
+      </div>
+      <div class="acc-body">
+        <ol style="padding-left:18px;color:var(--text-secondary);font-size:.9em;line-height:2">
+          <li>Klik menu <strong style="color:var(--text-primary)">📓 Catatan Harian</strong></li>
+          <li>Masukkan <strong style="color:var(--text-primary)">password</strong> saat diminta (hanya sekali per sesi)
+          </li>
+          <li>Pilih tanggal di bagian atas</li>
+          <li>Klik <strong style="color:var(--text-primary)">✏️ Tambah Catatan</strong></li>
+          <li>Isi judul, pilih kategori, tulis isi catatan (bisa format tebal/miring/daftar)</li>
+          <li>Klik <strong style="color:var(--text-primary)">💾 Simpan Catatan</strong></li>
+        </ol>
+      </div>
+    </div>
+
+
+    <!-- ══════════════════════════════════════════════
+     SECTION: ATURAN BISNIS
+══════════════════════════════════════════════ -->
+    <div id="aturan" class="sec-header">
+      <div class="sec-icon">📐</div>
+      <div>
+        <h2>Aturan Bisnis</h2>
+        <p>Logika perhitungan dan kategorisasi yang digunakan aplikasi</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="color:var(--kiro-accent);margin-bottom:4px">📊 Rumus CR% (Completion Rate)</h3>
+      <p style="color:var(--text-secondary);font-size:.9em;margin-bottom:16px">
+        CR% adalah angka yang menunjukkan seberapa baik performa pengiriman. Semakin tinggi semakin baik.
+      </p>
+      <table class="rt">
+        <thead>
+          <tr>
+            <th>Jenis CR</th>
+            <th>Rumus</th>
+            <th>Keterangan</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>CR% Kurir</td>
+            <td><code>Delivered ÷ Total × 100</code></td>
+            <td>Performa per kurir berdasarkan jumlah terkirim</td>
+          </tr>
+          <tr>
+            <td>CR% Account / General</td>
+            <td><code>(Delivered + Return + Misroute) ÷ Total × 100</code></td>
+            <td>Paket yang "sudah selesai bergerak" dari hub</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="callout c-yellow">
+        <b>❓ Kenapa Return dan Misroute masuk hitungan CR?</b>
+        Karena paket tersebut sudah "keluar" dari hub dan bergerak — berbeda dengan Reschedule dan Damage
+        yang masih "menggantung" di hub dan belum ada keputusan final.
+      </div>
+
+      <div class="grid-3" style="margin-top:16px">
+        <div class="sbox sbox-green">
+          <div class="sbox-val">≥95%</div>
+          <div class="sbox-label">🟢 Excellent</div>
+          <div class="sbox-desc">Performa sangat baik</div>
+        </div>
+        <div class="sbox sbox-yellow">
+          <div class="sbox-val">90–94%</div>
+          <div class="sbox-label">🟡 Warning</div>
+          <div class="sbox-desc">Perlu perhatian</div>
+        </div>
+        <div class="sbox sbox-red">
+          <div class="sbox-val">&lt;90%</div>
+          <div class="sbox-label">🔴 Critical</div>
+          <div class="sbox-desc">Perlu tindakan segera</div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ══════════════════════════════════════════════
+     SECTION: INSTALASI
+══════════════════════════════════════════════ -->
+    <div id="instalasi" class="sec-header">
+      <div class="sec-icon">🛠️</div>
+      <div>
+        <h2>Instalasi & Setup</h2>
+        <p>Cara memasang dan menjalankan aplikasi</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="color:var(--kiro-accent);margin-bottom:16px">🖥️ Kebutuhan Sistem</h3>
+      <div class="grid-2">
+        <div class="icard">
+          <div class="ititle">Untuk Lokal (XAMPP)</div>
+          <div class="ibody">
+            • XAMPP (Apache + MySQL + PHP 8.0+)<br>
+            • Browser modern (Chrome / Edge / Firefox)<br>
+            • Windows / Linux / macOS
+          </div>
+        </div>
+        <div class="icard">
+          <div class="ititle">Untuk Hosting</div>
+          <div class="ibody">
+            • Shared hosting dengan PHP 8.0+<br>
+            • MySQL database<br>
+            • Akses phpMyAdmin untuk import SQL
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="color:var(--kiro-accent);margin-bottom:16px">📋 Langkah Instalasi</h3>
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-title">1. Siapkan database</div>
+          <div class="tl-body">Buka phpMyAdmin → Import file SQL secara berurutan:<br>
+            <code>schema.sql</code> → <code>schema_v2.sql</code> → <code>schema_v3.sql</code>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-title">2. Konfigurasi koneksi</div>
+          <div class="tl-body">Edit file <code>config/database.php</code> — isi host, nama database, username, password
+            MySQL, dan ganti <code>UPLOAD_PASSWORD</code> dari default.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-title">3. Set permission folder</div>
+          <div class="tl-body">Pastikan folder <code>uploads/</code> bisa ditulis (permission 755 atau 775).</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-title">4. Akses aplikasi</div>
+          <div class="tl-body">Buka browser → masuk ke alamat hosting atau <code>http://localhost/dashspx/</code> untuk
+            lokal.</div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ══════════════════════════════════════════════
+     SECTION: PROSES PEMBUATAN DENGAN KIRO
+══════════════════════════════════════════════ -->
+    <div id="pembuatan" class="sec-header">
+      <div class="sec-icon">🤖</div>
+      <div>
+        <h2>Proses Pembuatan dengan Kiro AI</h2>
+        <p>Bagaimana aplikasi ini dibuat menggunakan Kiro — AI coding assistant dari AWS</p>
+      </div>
+    </div>
+
+    <div class="card" style="background:linear-gradient(135deg,#12151f,#1a1d2e);border-color:rgba(124,77,255,.3)">
+      <div style="display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap">
+        <div style="flex:1;min-width:260px">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+            <span style="font-size:2em">🤖</span>
+            <div>
+              <div style="font-weight:800;font-size:1.1em;color:var(--text-primary)">Kiro — AI Coding Assistant</div>
+              <div style="font-size:.85em;color:var(--text-secondary)">Produk AWS (Amazon Web Services)</div>
+            </div>
+            <span class="kiro-badge">✨ Powered by Kiro</span>
+          </div>
+          <p style="color:var(--text-secondary);margin-bottom:12px">
+            <strong style="color:var(--text-primary)">Kiro</strong> adalah asisten AI yang terintegrasi langsung
+            di dalam editor kode (seperti VS Code). Ia bisa membaca, menulis, dan mengubah kode secara langsung
+            di proyek — bukan hanya memberi saran di chat.
+          </p>
+          <p style="color:var(--text-secondary)">
+            Seluruh aplikasi SPX Logistics Dashboard ini — dari database, API backend PHP,
+            hingga antarmuka web — dibuat melalui percakapan dengan Kiro. Developer cukup
+            menjelaskan <em>apa yang diinginkan</em>, Kiro yang menulis dan mengeksekusi kodenya.
+          </p>
+        </div>
+        <div style="flex:0 0 240px">
+          <div class="grid-stat">
+            <div class="sbox sbox-purple">
+              <div class="sbox-val">v3.4</div>
+              <div class="sbox-label">Versi Saat Ini</div>
+            </div>
+            <div class="sbox sbox-green">
+              <div class="sbox-val">1 Bln</div>
+              <div class="sbox-label">Durasi Pengembangan</div>
+            </div>
+            <div class="sbox sbox-teal">
+              <div class="sbox-val">0</div>
+              <div class="sbox-label">Framework Eksternal</div>
+              <div class="sbox-desc">PHP & JS murni</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="color:var(--kiro-accent);margin-bottom:16px">🔄 Cara Kerja Pengembangan dengan Kiro</h3>
+      <div class="flow">
+        <div class="flow-step">
+          <span class="snum">1</span>
+          <div class="slabel">Developer Jelaskan</div>
+          <div class="ssub">Kebutuhan dalam bahasa natural</div>
+        </div>
+        <div class="farrow">→</div>
+        <div class="flow-step">
+          <span class="snum">2</span>
+          <div class="slabel">Kiro Analisis</div>
+          <div class="ssub">Baca kode yang sudah ada</div>
+        </div>
+        <div class="farrow">→</div>
+        <div class="flow-step">
+          <span class="snum">3</span>
+          <div class="slabel">Kiro Tulis Kode</div>
+          <div class="ssub">Langsung edit file di proyek</div>
+        </div>
+        <div class="farrow">→</div>
+        <div class="flow-step">
+          <span class="snum">4</span>
+          <div class="slabel">Developer Review</div>
+          <div class="ssub">Cek hasil & feedback</div>
+        </div>
+        <div class="farrow">→</div>
+        <div class="flow-step">
+          <span class="snum">5</span>
+          <div class="slabel">Iterasi</div>
+          <div class="ssub">Perbaiki & kembangkan</div>
+        </div>
+      </div>
+
+      <div class="callout c-purple" style="margin-top:16px">
+        <b>💬 Contoh percakapan nyata:</b>
+        Developer: <em>"Di menu damage, ketika aku pilih edit status manualnya jadi selesai, maka otomatis update data
+          di tabel forward_order, resi tersebut yang awalnya status damage, jadi damage_return"</em><br><br>
+        Kiro: langsung membaca file yang relevan, menganalisis logika yang ada, menulis kode PHP untuk auto-update,
+        mengupdate UI form, dan mencatat perubahan di dokumentasi — semuanya dalam satu respons.
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="color:var(--kiro-accent);margin-bottom:16px">📅 Perjalanan Pengembangan</h3>
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-title">v1.0 — Oktober 2026 &nbsp;<span class="pill p-purple">Awal</span></div>
+          <div class="tl-body">Migrasi dari Google Apps Script ke PHP Native. Dashboard pertama dengan upload CSV, rekap
+            kurir, dan 3 chart interaktif.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-title">v2.0 — November 2026 &nbsp;<span class="pill p-teal">Besar</span></div>
+          <div class="tl-body">Rebuild total ke SPA multi-halaman. Tambah menu Monitoring Onhold, Damage, NS, dan
+            Catatan Harian. Validasi onhold otomatis STD/non-STD.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-title">v2.3 — November 2026</div>
+          <div class="tl-body">Auto-update status damage ke damage_return. Password catatan harian cukup sekali per
+            sesi. Fix bug tampilan data catatan harian.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-title">v3.0 — November 2026 &nbsp;<span class="pill p-teal">Besar</span></div>
+          <div class="tl-body">Sistem onhold_update menggantikan onhold_tracking. Section baru di dashboard untuk
+            perbandingan status onhold vs update terbaru.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-title">v3.1–3.4 — November 2026</div>
+          <div class="tl-body">Tabel kurir sortable, fix dark/light mode, fix logika status onhold_update, panduan
+            hosting, dan rebuild dokumentasi lengkap.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="color:var(--kiro-accent);margin-bottom:16px">🧰 Teknologi yang Digunakan</h3>
+      <table class="rt">
+        <thead>
+          <tr>
+            <th>Teknologi</th>
+            <th>Versi</th>
+            <th>Fungsi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>PHP Native</strong></td>
+            <td>8.x</td>
+            <td>Backend — API, logika bisnis, koneksi database</td>
+          </tr>
+          <tr>
+            <td><strong>MySQL</strong></td>
+            <td>8.x</td>
+            <td>Database — penyimpanan semua data</td>
+          </tr>
+          <tr>
+            <td><strong>Vanilla JavaScript</strong></td>
+            <td>ES2020+</td>
+            <td>Frontend — routing SPA, fetch data, render tabel</td>
+          </tr>
+          <tr>
+            <td><strong>CSS Custom Properties</strong></td>
+            <td>—</td>
+            <td>Tampilan — dark/light mode, komponen UI</td>
+          </tr>
+          <tr>
+            <td><strong>Chart.js</strong></td>
+            <td>4.4.3</td>
+            <td>Grafik donut dan bar interaktif</td>
+          </tr>
+          <tr>
+            <td><strong>jQuery</strong></td>
+            <td>3.7.1</td>
+            <td>Diperlukan oleh Summernote</td>
+          </tr>
+          <tr>
+            <td><strong>Summernote</strong></td>
+            <td>0.8.20</td>
+            <td>Editor teks kaya untuk catatan harian</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="callout c-purple" style="margin-top:12px">
+        <b>🎯 Prinsip desain:</b>
+        Tidak menggunakan framework berat (tidak Laravel, tidak React, tidak Vue) agar aplikasi
+        tetap ringan, mudah dipahami, dan bisa berjalan di hosting shared yang paling sederhana sekalipun.
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="card"
+      style="text-align:center;background:linear-gradient(135deg,#12151f,#1a1d2e);border-color:rgba(124,77,255,.3)">
+      <div style="font-size:2.5em;margin-bottom:12px">🤖✨</div>
+      <div style="font-size:1.1em;font-weight:700;color:var(--text-primary);margin-bottom:8px">
+        Dibuat dengan bantuan <span style="color:#b39ddb">Kiro AI</span>
+      </div>
+      <p style="color:var(--text-secondary);font-size:.9em;max-width:500px;margin:0 auto 16px">
+        Seluruh kode aplikasi ini ditulis oleh Kiro — dari schema database, API PHP, hingga antarmuka web —
+        berdasarkan kebutuhan yang dijelaskan dalam bahasa sehari-hari.
+      </p>
+      <div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap">
+        <span class="kiro-badge">🤖 Kiro AI</span>
+        <span class="hbadge">PHP Native</span>
+        <span class="hbadge">MySQL</span>
+        <span class="hbadge">Vanilla JS</span>
+        <span class="hbadge">SPX TMU</span>
+      </div>
+    </div>
+
+  </div><!-- /wrap -->
+
+  <!-- ══ FOOTER ══ -->
+  <footer>
+    <div class="footer-logo">📦 SPX Logistics Dashboard</div>
+    <p>SPX Tambang Ulang Hub · Versi 3.4 · November 2026</p>
+    <p>Dibuat dengan <span style="color:#7c4dff">♥</span> menggunakan <strong>Kiro AI</strong> — AWS AI Coding Assistant
+    </p>
+  </footer>
+
+  <script>
+    function toggleAcc(header) {
+      const body = header.nextElementSibling;
+      const arrow = header.querySelector('.acc-arrow');
+      const isOpen = body.classList.contains('open');
+      body.classList.toggle('open', !isOpen);
+      arrow.classList.toggle('open', !isOpen);
+    }
+
+    // Smooth scroll
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        e.preventDefault();
+        const target = document.querySelector(a.getAttribute('href'));
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+
+    // Highlight active nav on scroll
+    const sections = document.querySelectorAll('[id]');
+    const navLinks = document.querySelectorAll('.topnav nav a');
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(s => {
+        if (window.scrollY >= s.offsetTop - 100) current = s.id;
+      });
+      navLinks.forEach(a => {
+        a.style.background = a.getAttribute('href') === '#' + current
+          ? 'rgba(92,107,192,.2)' : '';
+        a.style.borderColor = a.getAttribute('href') === '#' + current
+          ? 'rgba(92,107,192,.4)' : 'transparent';
+        a.style.color = a.getAttribute('href') === '#' + current
+          ? 'var(--kiro-accent)' : '';
+      });
+    });
+  </script>
+</body>
+
+</html>
